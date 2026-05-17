@@ -1,6 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 import { save, open } from "@tauri-apps/plugin-dialog";
-import { toSvgPoint } from "$lib/graph";
+import {
+  findNodeAtPoint,
+  removeNode,
+  removeEdge,
+  toSvgPoint,
+} from "$lib/graph";
 import type { Node, Edge, Selection } from "$lib/types";
 
 export function useCanvas() {
@@ -98,11 +103,11 @@ export function useCanvas() {
     if (connecting) {
       const svg = event.currentTarget as SVGSVGElement;
       const svgPoint = toSvgPoint(event, svg);
-      const target = nodes.find(
-        (n) =>
-          n.id !== connecting!.fromId &&
-          Math.abs(n.x - svgPoint.x) < 60 &&
-          Math.abs(n.y - svgPoint.y) < 25,
+      const target = findNodeAtPoint(
+        nodes,
+        svgPoint.x,
+        svgPoint.y,
+        connecting!.fromId,
       );
       if (target) {
         edges.push({ from: connecting.fromId, to: target.id });
@@ -131,12 +136,11 @@ export function useCanvas() {
     }
 
     if (selected.type === "node") {
-      const id = selected.id;
-      edges = edges.filter((e) => e.from !== id && e.to !== id);
-      nodes = nodes.filter((n) => n.id !== id);
+      const result = removeNode(nodes, edges, selected.id);
+      nodes = result.nodes;
+      edges = result.edges;
     } else if (selected.type === "edge") {
-      const index = selected.index;
-      edges = edges.filter((_, i) => i !== index);
+      edges = removeEdge(edges, selected.index);
     }
     selected = null;
   }
