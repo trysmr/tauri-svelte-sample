@@ -16,4 +16,4 @@ describe("bezierPath", () => {
     const result = bezierPath(300, 100, 100, 100);
     expect(result).toBe("M 300 100 C 200 100, 200 100, 100 100");
   });
-})
+});
