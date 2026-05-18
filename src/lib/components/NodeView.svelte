@@ -8,6 +8,8 @@
     onMouseDown,
     onDblClick,
     onConnectorMouseDown,
+    connectorX,
+    connectorY,
     onLabelKeyDown,
     onLabelBlur,
     onLabelInput,
@@ -18,6 +20,8 @@
     onMouseDown: (event: MouseEvent) => void;
     onDblClick: (event: MouseEvent) => void;
     onConnectorMouseDown: (event: MouseEvent) => void;
+    connectorX: number;
+    connectorY: number;
     onLabelKeyDown: (event: KeyboardEvent) => void;
     onLabelBlur: () => void;
     onLabelInput: (value: string) => void;
@@ -42,8 +46,8 @@
 />
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <circle
-  cx={node.x + 60}
-  cy={node.y}
+  cx={node.x + connectorX}
+  cy={node.y + connectorY}
   r={6}
   class="connector"
   onmousedown={onConnectorMouseDown}

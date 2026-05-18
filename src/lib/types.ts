@@ -14,3 +14,12 @@ export type Selection =
   | { type: "node"; id: number }
   | { type: "edge"; index: number }
   | null;
+
+export type EdgeStyle =
+  | "bezier-horizontal"
+  | "bezier-vertical"
+  | "orthogonal-horizontal"
+  | "orthogonal-vertical"
+  | "straight"
+  | "step-horizontal"
+  | "step-vertical";

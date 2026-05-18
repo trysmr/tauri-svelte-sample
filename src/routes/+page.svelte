@@ -3,11 +3,17 @@
   import Toolbar from "$lib/components/Toolbar.svelte";
   import NodeView from "$lib/components/NodeView.svelte";
   import EdgeView from "$lib/components/EdgeView.svelte";
+  import { pathFunctions, connectionOffsets } from "$lib/graph";
 
   const canvas = useCanvas();
 </script>
 
-<Toolbar onSave={canvas.saveGraph} onLoad={canvas.loadGraph} />
+<Toolbar
+  onSave={canvas.saveGraph}
+  onLoad={canvas.loadGraph}
+  edgeStyle={canvas.edgeStyle}
+  onEdgeStyleChange={(style) => (canvas.edgeStyle = style)}
+/>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -23,12 +29,14 @@
   {#each canvas.edges as edge, i (i)}
     {@const from = canvas.getNode(edge.from)}
     {@const to = canvas.getNode(edge.to)}
+    {@const offsets = connectionOffsets[canvas.edgeStyle]}
     {#if from && to}
       <EdgeView
-        x1={from.x + 60}
-        y1={from.y}
-        x2={to.x - 60}
-        y2={to.y}
+        x1={from.x + offsets.sourceX}
+        y1={from.y + offsets.sourceY}
+        x2={to.x + offsets.targetX}
+        y2={to.y + offsets.targetY}
+        pathFn={pathFunctions[canvas.edgeStyle]}
         isSelected={canvas.selected?.type === "edge" &&
           canvas.selected.index === i}
         onClick={(e) => {
@@ -41,20 +49,25 @@
 
   {#if canvas.connecting}
     {@const from = canvas.getNode(canvas.connecting.fromId)}
+    {@const offsets = connectionOffsets[canvas.edgeStyle]}
     {#if from}
       <EdgeView
-        x1={from.x + 60}
-        y1={from.y}
+        x1={from.x + offsets.sourceX}
+        y1={from.y + offsets.sourceY}
         x2={canvas.connecting.mouseX}
         y2={canvas.connecting.mouseY}
+        pathFn={pathFunctions[canvas.edgeStyle]}
         isConnecting={true}
       />
     {/if}
   {/if}
 
   {#each canvas.nodes as node (node.id)}
+    {@const offsets = connectionOffsets[canvas.edgeStyle]}
     <NodeView
       {node}
+      connectorX={offsets.connectorX}
+      connectorY={offsets.connectorY}
       isSelected={canvas.selected?.type === "node" &&
         canvas.selected.id === node.id}
       editing={canvas.editing?.node.id === node.id ? canvas.editing : null}

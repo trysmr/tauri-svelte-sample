@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { bezierPath } from "$lib/graph";
+  import type { PathFn } from "$lib/graph";
 
   let {
     x1,
     y1,
     x2,
     y2,
+    pathFn,
     isSelected = false,
     isConnecting = false,
     onClick,
@@ -14,6 +15,7 @@
     y1: number;
     x2: number;
     y2: number;
+    pathFn: PathFn;
     isSelected?: boolean;
     isConnecting?: boolean;
     onClick?: (event: MouseEvent) => void;
@@ -23,11 +25,11 @@
 {#if onClick}
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <path d={bezierPath(x1, y1, x2, y2)} class="edge-hit" onclick={onClick} />
+  <path d={pathFn(x1, y1, x2, y2)} class="edge-hit" onclick={onClick} />
 {/if}
 
 <path
-  d={bezierPath(x1, y1, x2, y2)}
+  d={pathFn(x1, y1, x2, y2)}
   class="edge"
   class:selected={isSelected}
   class:connecting={isConnecting}

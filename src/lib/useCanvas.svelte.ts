@@ -6,7 +6,7 @@ import {
   removeEdge,
   toSvgPoint,
 } from "$lib/graph";
-import type { Node, Edge, Selection } from "$lib/types";
+import type { Node, Edge, Selection, EdgeStyle } from "$lib/types";
 
 export function useCanvas() {
   let nodes: Node[] = $state([]);
@@ -20,6 +20,7 @@ export function useCanvas() {
   let wasConnecting = $state(false);
   let editing: { node: Node; value: string } | null = $state(null);
   let selected: Selection = $state(null);
+  let edgeStyle: EdgeStyle = $state("bezier-horizontal");
 
   function getNode(id: number): Node | undefined {
     return nodes.find((n) => n.id === id);
@@ -110,7 +111,10 @@ export function useCanvas() {
         connecting!.fromId,
       );
       if (target) {
-        edges.push({ from: connecting.fromId, to: target.id });
+        edges.push({
+          from: connecting.fromId,
+          to: target.id,
+        });
       }
       wasConnecting = true;
       connecting = null;
@@ -225,6 +229,12 @@ export function useCanvas() {
     },
     get selected() {
       return selected;
+    },
+    get edgeStyle() {
+      return edgeStyle;
+    },
+    set edgeStyle(value: EdgeStyle) {
+      edgeStyle = value;
     },
     getNode,
     handleCanvasClick,
